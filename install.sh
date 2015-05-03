@@ -46,7 +46,7 @@ sed -i "s/#MAIL_CMD/MAIL_CMD/g" /etc/rkhunter.conf
 # Add Default User
 useradd -m -c "Default User" "$defaultuser"
 # Set Passwort for Default User
-echo "$defaultpass" | passwd "$defaultuser" --stdin
+echo "$defaultuser":"$defaultpass" | chpasswd
 addgroup --system sshusers
 adduser "$defaultuser" sshusers
 # Set SSH-Users
