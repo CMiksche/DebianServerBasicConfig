@@ -20,7 +20,9 @@ apt-get update && apt-get upgrade -y
 # Dist-Upgrade
 apt-get dist-upgrade -y
 # Install
-apt-get install ufw rkhunter fail2ban nano sudo htop whois -y
+apt-get install ufw rkhunter fail2ban nano sudo htop whois curl nodejs -y
+# Install Composer
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 # (Re-)Start
 service ufw restart
 service fail2ban restart
