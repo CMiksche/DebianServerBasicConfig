@@ -32,6 +32,27 @@ source ./config.sh
 apt-get update && apt-get upgrade -y
 # Dist-Upgrade
 apt-get dist-upgrade -y
+
+if ["$mailserver" == "yes"]
+	then 
+		apt-get purge exim4*
+		mkdir ~/build ; cd ~/build
+		wget -O - https://github.com/andryyy/mailcow/archive/v0.13.1.tar.gz | tar xfz -
+		cd mailcow-*
+		chmod +x /install.sh
+		echo "
+		Please edit the following file.
+		More information: https://github.com/andryyy/mailcow
+		"
+		nano mailcow.config
+		./install.sh
+fi
+
+if ["$mailserver" == "postfix"]
+	then 
+		apt-get install postfix
+fi
+
 # Install
 # ufw = Firewall
 # rkhunter, fail2ban and sudo are security tools
@@ -39,7 +60,7 @@ apt-get dist-upgrade -y
 # htop = System monitoring
 # figlet = ASCII Art
 # screen = Additional terminal that continues running in the background
-apt-get install ufw rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron ntp tar zip unzip -y
+apt-get install openssh-server ca-certificates ufw rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron git ntp tar zip unzip -y
 
 # (Re-)Start
 service ufw restart
@@ -119,7 +140,7 @@ if ["$webserver" == "nginx"]
 		curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 fi
 # apache
-if ["$webserver" == "apache"]
+if ["$webserver" == "apache2"]
 	then 
 		sudo apt-get install apache2 php5
 		# Install Composer
@@ -146,6 +167,20 @@ if ["$database" == "mysql"]
 		# Write command in crontab
 		echo "35 2    * * *	root   ./opt/basic_backup/createbackup.sh >> /opt/basic_backup/log.log 2>&1" >> /etc/crontab
 fi 
+
+# Install Let's Encrypt
+if ["$letsencrypt" == "yes"]
+	then
+		# Install Let's Encrypt
+		cd /opt
+		git clone https://github.com/letsencrypt/letsencrypt
+		cd letsencrypt
+		./letsencrypt-auto --help
+		# Create Certificate
+		letsencrypt certonly --standalone -d $website -d www.$website
+		# Renewal Cronjob
+		echo "30 3    24 * *  root    service $webserver stop; cd /opt/letsencrypt; ./letsencrypt-auto renew; service $webserver start" >> /etc/crontab
+fi
 
 # Restart Services
 /etc/init.d/ssh restart
