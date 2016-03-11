@@ -32,6 +32,13 @@ source ./config.sh
 apt-get update && apt-get upgrade -y
 # Dist-Upgrade
 apt-get dist-upgrade -y
+# Install
+# rkhunter, fail2ban and sudo are security tools
+# nano = Editor
+# htop = System monitoring
+# figlet = ASCII Art
+# screen = Additional terminal that continues running in the background
+apt-get install openssh-server ca-certificates rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron git ntp tar zip unzip -y
 
 if ["$mailserver" == "yes"]
 	then 
@@ -53,14 +60,8 @@ if ["$mailserver" == "postfix"]
 		apt-get install postfix
 fi
 
-# Install
-# ufw = Firewall
-# rkhunter, fail2ban and sudo are security tools
-# nano = Editor
-# htop = System monitoring
-# figlet = ASCII Art
-# screen = Additional terminal that continues running in the background
-apt-get install openssh-server ca-certificates ufw rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron git ntp tar zip unzip -y
+# Install Firewall
+apt-get install ufw -y
 
 # (Re-)Start
 service ufw restart
