@@ -109,6 +109,10 @@ if ["$webserver" == "nginx"]
 		sed -i "s/yourdomain.com/$website/g" /etc/vsftpd.conf
 		# Set link
 		ln -s /etc/nginx/sites-available/"$website" /etc/nginx/sites-enabled/"$website"
+		# Create dir for Website
+		mkdir /var/www/html/$website
+		# Create file for Website
+		echo "<?php echo '<h1>Your new Website.</h1> <h3>Created by DebianServerBasicConfig.</h3>'; ?>" >> /var/www/html/$website/index.php
 		# Restart nginx
 		service nginx restart
 		# Install Composer
