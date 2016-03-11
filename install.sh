@@ -28,6 +28,10 @@ if [ "$EUID" -ne 0 ]
 fi
 # Include config
 source ./config.sh
+# Pause function
+function pause(){
+   read -p "$*"
+}
 # Update
 apt-get update && apt-get upgrade -y
 # Dist-Upgrade
@@ -53,6 +57,7 @@ if ["$mailserver" == "yes"]
 		"
 		nano mailcow.config
 		./install.sh
+		pause 'Press [Enter] key to continue...'
 fi
 
 if ["$mailserver" == "postfix"]
