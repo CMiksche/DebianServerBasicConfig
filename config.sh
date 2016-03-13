@@ -46,3 +46,4 @@ letsencrypt="yes"
 
 # ToDo:
 # - Change Password of the "root"-User
+# - Ask the user about the settings with "read -p"
