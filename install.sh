@@ -128,8 +128,6 @@ fi
 if [ $webserver == "nginx" ]
 	then 
 		sudo apt-get install nginx php5-fpm vsftpd
-		# Go to "sites-available"
-		cd /etc/nginx/sites-available
 		# Copy example
 		cp copy/nginxsite /etc/nginx/sites-available/"$website"
 		# Change Name
