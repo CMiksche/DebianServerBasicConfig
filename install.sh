@@ -17,7 +17,7 @@
 # License: GNU General Public License
 #
 # Contact:
-# >> http://cdm.webpage4.me
+# >> http://christoph.miksche.org
 # >> Twitter: CMiksche
 # >> GitHub: CMiksche
 #
@@ -44,7 +44,7 @@ apt-get dist-upgrade -y
 # screen = Additional terminal that continues running in the background
 apt-get install openssh-server ca-certificates rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron git ntp tar zip unzip -y
 
-if ["$mailserver" == "yes"]
+if [$mailserver == "yes"]
 	then 
 		apt-get purge exim4*
 		mkdir ~/build ; cd ~/build
@@ -60,7 +60,7 @@ if ["$mailserver" == "yes"]
 		pause 'Press [Enter] key to continue...'
 fi
 
-if ["$mailserver" == "postfix"]
+if [$mailserver == "postfix"]
 	then 
 		apt-get install postfix
 fi
@@ -116,7 +116,7 @@ echo "$hostname" >> /etc/hostname
 /etc/init.d/hostname.sh start
 
 # Install FTP Service
-if ["$ftpserver" == "vsftpd"]
+if [$ftpserver == "vsftpd"]
 	then 
 		sudo apt-get install vsftpd
 		# Allow FTP Commands
@@ -125,7 +125,7 @@ fi
 
 # Install Webserver
 # nginx
-if ["$webserver" == "nginx"]
+if [$webserver == "nginx"]
 	then 
 		sudo apt-get install nginx php5-fpm vsftpd
 		# Go to "sites-available"
@@ -146,7 +146,7 @@ if ["$webserver" == "nginx"]
 		curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 fi
 # apache
-if ["$webserver" == "apache2"]
+if [$webserver == "apache2"]
 	then 
 		sudo apt-get install apache2 php5
 		# Install Composer
@@ -154,7 +154,7 @@ if ["$webserver" == "apache2"]
 fi
 
 # Install Database
-if ["$database" == "mysql"]
+if [$database == "mysql"]
 	then 
 		sudo apt-get install mysql-server phpmyadmin
 		# Create Backup
@@ -175,7 +175,7 @@ if ["$database" == "mysql"]
 fi 
 
 # Install Let's Encrypt
-if ["$letsencrypt" == "yes"]
+if [$letsencrypt == "yes"]
 	then
 		# Install Let's Encrypt
 		cd /opt
@@ -196,7 +196,7 @@ echo "
 
 Hello,
 the installation is finished."
-if ["$database" == "mysql"]
+if [$database == "mysql"]
 	then 
 		echo "
 		Every day at 2:35 a backup of your database will created, Saturdays a backup of the dir /var/www will be created too.
