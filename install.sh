@@ -106,7 +106,7 @@ sed -i "s/PermitRootLogin without-password/PermitRootLogin no/g" /etc/ssh/sshd_c
 
 # Message of the day
 # Copy MotD
-cp ./copy/motd /etc/motd
+cp copy/motd /etc/motd
 # Create ASCII Art from the hostname
 figlet "$hostname" >> /etc/motd
 
@@ -131,7 +131,7 @@ if [ $webserver == "nginx" ]
 		# Go to "sites-available"
 		cd /etc/nginx/sites-available
 		# Copy example
-		cp ./copy/nginxsite /etc/nginx/sites-available/"$website"
+		cp copy/nginxsite /etc/nginx/sites-available/"$website"
 		# Change Name
 		sed -i "s/yourdomain.com/$website/g" /etc/vsftpd.conf
 		# Set link
@@ -161,7 +161,7 @@ if [ $database == "mysql" ]
 		# Create dir
 		mkdir /opt/basic_backup
 		# Copy Backup File
-		cp ./copy/createbackup.sh /opt/basic_backup/createbackup.sh
+		cp copy/createbackup.sh /opt/basic_backup/createbackup.sh
 		# Change hostname in File
 		sed -i "s/DBHOSTNAME/$hostname/g" /opt/basic_backup/createbackup.sh
 		# Change database password in File
