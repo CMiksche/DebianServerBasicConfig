@@ -62,7 +62,7 @@ fi
 
 if [ $mailserver == "postfix" ]
 	then 
-		apt-get install postfix
+		apt-get install postfix -y
 fi
 
 # Install Firewall
@@ -118,7 +118,7 @@ echo "$hostname" >> /etc/hostname
 # Install FTP Service
 if [ $ftpserver == "vsftpd" ]
 	then 
-		sudo apt-get install vsftpd
+		sudo apt-get install vsftpd -y
 		# Allow FTP Commands
 		sed -i "s/#write_enable=YES/write_enable=YES/g" /etc/vsftpd.conf
 fi
@@ -127,17 +127,25 @@ fi
 # nginx
 if [ $webserver == "nginx" ]
 	then 
-		sudo apt-get install nginx php5-fpm vsftpd
+		sudo apt-get install nginx php5-fpm vsftpd -y
 		# Copy example
 		cp copy/nginxsite /etc/nginx/sites-available/"$website"
 		# Change Name
-		sed -i "s/yourdomain.com/$website/g" /etc/vsftpd.conf
+		sed -i "s/yourdomain.com/$website/g" /etc/nginx/sites-available/"$website"
 		# Set link
 		ln -s /etc/nginx/sites-available/"$website" /etc/nginx/sites-enabled/"$website"
 		# Create dir for Website
 		mkdir /var/www/html/$website
 		# Create file for Website
 		echo "<?php echo '<h1>Your new Website.</h1> <h3>Created by DebianServerBasicConfig.</h3>'; ?>" >> /var/www/html/$website/index.php
+		# Delete old default file
+		cp /etc/nginx/sites-available/default /etc/nginx/sites-available/OLD_default
+		rm -rf /etc/nginx/sites-available/default
+		rm -rf /etc/nginx/sites-enabled/default
+		# Copy default example
+		cp copy/nginxdefault /etc/nginx/sites-available/default
+		# Set default link
+		ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 		# Restart nginx
 		service nginx restart
 		# Install Composer
@@ -146,7 +154,7 @@ fi
 # apache
 if [ $webserver == "apache2" ]
 	then 
-		sudo apt-get install apache2 php5
+		sudo apt-get install apache2 php5 -y
 		# Install Composer
 		curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 fi
@@ -154,7 +162,7 @@ fi
 # Install Database
 if [ $database == "mysql" ]
 	then 
-		sudo apt-get install mysql-server phpmyadmin
+		sudo apt-get install mysql-server phpmyadmin -y
 		# Create Backup
 		# Create dir
 		mkdir /opt/basic_backup
@@ -170,6 +178,22 @@ if [ $database == "mysql" ]
 		chmod +x /opt/basic_backup/createbackup.sh
 		# Write command in crontab
 		echo "35 2    * * *	root   ./opt/basic_backup/createbackup.sh >> /opt/basic_backup/log.log 2>&1" >> /etc/crontab
+		if [ $webserver == "nginx" ]
+			then 
+			# website.com/phpmyadmin
+			ln -s /usr/share/phpmyadmin /usr/share/nginx/html
+			ln -s /usr/share/phpmyadmin /var/www/html
+			php5enmod mcrypt
+			# pma.website.com
+			# Copy example
+			cp copy/nginxpma /etc/nginx/sites-available/pma."$website"
+			# Change Name
+			sed -i "s/yourdomain.com/pma.$website/g" /etc/nginx/sites-available/pma."$website"
+			# Set link
+			ln -s /etc/nginx/sites-available/pma."$website" /etc/nginx/sites-enabled/pma."$website"
+			service php5-fpm restart
+			service nginx restart
+		fi
 fi 
 
 # Install Let's Encrypt
