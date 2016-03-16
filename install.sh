@@ -28,10 +28,8 @@ if [ "$EUID" -ne 0 ]
 fi
 # Include config
 source ./config.sh
-# Pause function
-function pause(){
-   read -p "$*"
-}
+# Include functions
+source ./functions.sh
 # Update
 apt-get update && apt-get upgrade -y
 # Dist-Upgrade
@@ -149,14 +147,14 @@ if [ $webserver == "nginx" ]
 		# Restart nginx
 		service nginx restart
 		# Install Composer
-		curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+		installcomposer
 fi
 # apache
 if [ $webserver == "apache2" ]
 	then 
 		sudo apt-get install apache2 php5 -y
 		# Install Composer
-		curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+		installcomposer
 fi
 
 # Install Database
