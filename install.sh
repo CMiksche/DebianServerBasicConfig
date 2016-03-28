@@ -175,7 +175,7 @@ if [ $database == "mysql" ]
 		# Make file executable
 		chmod +x /opt/basic_backup/createbackup.sh
 		# Write command in crontab
-		echo "35 2    * * *	root   ./opt/basic_backup/createbackup.sh >> /opt/basic_backup/log.log 2>&1" >> /etc/crontab
+		echo "35 2    * * *	root    /opt/basic_backup/createbackup.sh" >> /etc/crontab
 		if [ $webserver == "nginx" ]
 			then 
 			# website.com/phpmyadmin
@@ -223,7 +223,7 @@ if [ $database == "mysql" ]
 		You can find your backups here: /var/www_backup/."
 fi 
 echo "
-You should restart your Server now."
+You should restart (reboot) your Server now."
 #	 _____       __ 
 #	| ____|___  / _|
 #	|  _| / _ \| |_ 

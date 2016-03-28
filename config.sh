@@ -48,3 +48,4 @@ letsencrypt="yes"
 # - Change Password of the "root"-User
 # - Ask the user about the settings with "read -p"
 # - Set User + Password for phpMyAdmin
+# - Add optional HHVM Installation to the nginx Installation
