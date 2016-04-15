@@ -45,6 +45,7 @@ apt-get install openssh-server ca-certificates rkhunter fail2ban nano sudo htop 
 if [ $mailserver == "yes" ]
 	then 
 		apt-get purge exim4*
+		apt-get install netcat -y
 		mkdir ~/build ; cd ~/build
 		wget -O - https://github.com/andryyy/mailcow/archive/v0.13.1.tar.gz | tar xfz -
 		cd mailcow-*
@@ -203,7 +204,7 @@ if [ $letsencrypt == "yes" ]
 		cd letsencrypt
 		./letsencrypt-auto --help
 		# Create Certificate
-		letsencrypt certonly --standalone -d $website -d www.$website
+		./letsencrypt-auto certonly --standalone -d $website -d www.$website
 		# Renewal Cronjob
 		echo "30 3    24 * *  root    service $webserver stop; cd /opt/letsencrypt; ./letsencrypt-auto renew; service $webserver start" >> /etc/crontab
 fi
