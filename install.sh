@@ -209,6 +209,9 @@ if [ $letsencrypt == "yes" ]
 		echo "30 3    24 * *  root    service $webserver stop; cd /opt/letsencrypt; ./letsencrypt-auto renew; service $webserver start" >> /etc/crontab
 fi
 
+# Forward E-Mails to Systememail
+echo "root: $systemmail" >> /etc/aliases
+
 # Restart Services
 /etc/init.d/ssh restart
 
