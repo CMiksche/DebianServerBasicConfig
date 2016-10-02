@@ -21,6 +21,10 @@ defaultpass=""
 systemmail="webmaster@yourdomain.com"
 # Your preferred hostname
 hostname="myServer"
+# PHP?
+php="yes"
+# Node.js?
+node="yes"
 # FTP-Server
 # Options: vsftpd, any other word (= no FTP-Service)
 ftpserver="vsftpd"

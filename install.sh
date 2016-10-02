@@ -31,21 +31,21 @@ source ./config.sh
 # Include functions
 source ./functions.sh
 # Update
-apt-get update && apt-get upgrade -y
+apt update && apt upgrade -y
 # Dist-Upgrade
-apt-get dist-upgrade -y
+apt dist-upgrade -y
 # Install
 # rkhunter, fail2ban and sudo are security tools
 # nano = Editor
 # htop = System monitoring
 # figlet = ASCII Art
 # screen = Additional terminal that continues running in the background
-apt-get install openssh-server ca-certificates rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron git ntp tar zip unzip -y
+apt install openssh-server ca-certificates rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron git ntp tar zip unzip -y
 
 if [ $mailserver == "yes" ]
 	then 
-		apt-get purge exim4*
-		apt-get install netcat -y
+		apt purge exim4*
+		apt install netcat -y
 		mkdir ~/build ; cd ~/build
 		wget -O - https://github.com/andryyy/mailcow/archive/v0.13.1.tar.gz | tar xfz -
 		cd mailcow-*
@@ -61,17 +61,17 @@ fi
 
 if [ $mailserver == "postfix" ]
 	then 
-		apt-get install postfix -y
+		apt install postfix -y
 fi
 
 # Install Firewall
-apt-get install ufw -y
+apt install ufw -y
 
 # (Re-)Start
 service ufw restart
 service fail2ban restart
 # Daily Update
-su -c "echo -e \"#! /bin/sh\napt-get update && apt-get upgrade -y\" >> /etc/cron.daily/update && chmod a+x /etc/cron.daily/update"
+su -c "echo -e \"#! /bin/sh\napt update && apt upgrade -y\" >> /etc/cron.daily/update && chmod a+x /etc/cron.daily/update"
 # Change SSH Port
 sed -i "s/Port 22/Port $sshport/g" /etc/ssh/sshd_config
 # Allow Ports
@@ -117,16 +117,28 @@ echo "$hostname" >> /etc/hostname
 # Install FTP Service
 if [ $ftpserver == "vsftpd" ]
 	then 
-		sudo apt-get install vsftpd -y
+		sudo apt install vsftpd -y
 		# Allow FTP Commands
 		sed -i "s/#write_enable=YES/write_enable=YES/g" /etc/vsftpd.conf
+fi
+
+# Install Node.js
+if [ $node == "yes" ]
+	then 
+		sudo apt install node npm -y
+		npm install pm2 -g
 fi
 
 # Install Webserver
 # nginx
 if [ $webserver == "nginx" ]
 	then 
-		sudo apt-get install nginx php5-fpm vsftpd -y
+		# Install PHP
+		if [ $php == "yes" ]
+			then 
+				sudo apt install php5-fpm -y
+		fi
+		sudo apt install nginx vsftpd -y
 		# Copy example
 		cp copy/nginxsite /etc/nginx/sites-available/"$website"
 		# Change Name
@@ -153,7 +165,7 @@ fi
 # apache
 if [ $webserver == "apache2" ]
 	then 
-		sudo apt-get install apache2 php5 -y
+		sudo apt install apache2 php5 -y
 		# Install Composer
 		installcomposer
 fi
@@ -161,7 +173,7 @@ fi
 # Install Database
 if [ $database == "mysql" ]
 	then 
-		sudo apt-get install mysql-server phpmyadmin -y
+		sudo apt install mysql-server phpmyadmin -y
 		# Create Backup
 		# Create dir
 		mkdir /opt/basic_backup
@@ -198,16 +210,23 @@ fi
 # Install Let's Encrypt
 if [ $letsencrypt == "yes" ]
 	then
+		# Add Backports
+		echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
+		sudo apt update
 		# Install Let's Encrypt
-		cd /opt
-		git clone https://github.com/letsencrypt/letsencrypt
-		cd letsencrypt
-		./letsencrypt-auto --help
+		sudo apt install certbot -t jessie-backports
+		# Stop webserver
+		service "$webserver" stop
 		# Create Certificate
-		./letsencrypt-auto certonly --standalone -d $website -d www.$website
+		certbot certonly --standalone -d $website -d www.$website
 		# Renewal Cronjob
-		echo "30 3    24 * *  root    service $webserver stop; cd /opt/letsencrypt; ./letsencrypt-auto renew; service $webserver start" >> /etc/crontab
+		echo "30 3    24 * *  root    service $webserver stop; certbot renew; service $webserver start" >> /etc/crontab
+		# Start webserver
+		service "$webserver" start
 fi
+
+# Forward E-Mails to Systememail
+echo "root: $systemmail" >> /etc/aliases
 
 # Restart Services
 /etc/init.d/ssh restart
