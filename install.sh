@@ -125,7 +125,7 @@ fi
 # Install Node.js
 if [ $node == "yes" ]
 	then 
-		sudo apt install node npm -y
+		sudo apt install nodejs-legacy node npm -y
 		npm install pm2 -g
 fi
 
