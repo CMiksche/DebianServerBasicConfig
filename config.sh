@@ -25,6 +25,8 @@ hostname="myServer"
 php="yes"
 # Node.js?
 node="yes"
+# Python3 ?
+python3="yes"
 # FTP-Server
 # Options: vsftpd, any other word (= no FTP-Service)
 ftpserver="vsftpd"

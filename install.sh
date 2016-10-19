@@ -129,6 +129,12 @@ if [ $node == "yes" ]
 		npm install pm2 -g
 fi
 
+# Install Python
+if [ $python3 == "yes" ]
+	then 
+		sudo apt install python python-pip python3 python3-pip -y
+fi
+
 # Install Webserver
 # nginx
 if [ $webserver == "nginx" ]
