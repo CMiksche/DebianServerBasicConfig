@@ -40,6 +40,11 @@ if [ $weekday == "Sa" ] # If Saturday
 		tar -zcf /var/www_backup/DBHOSTNAME/$year/$month/$day/data.tgz /var/www
 fi
 
+if [ $weekday == "Sat" ] # If Saturday
+	then
+		tar -zcf /var/www_backup/DBHOSTNAME/$year/$month/$day/data.tgz /var/www
+fi
+
 # Create backup of database
 
 mysqldump --all-databases -u DBUSER --password=DBPASS --events | gzip >/var/www_backup/DBHOSTNAME/$year/$month/$day/db.sql.gz
