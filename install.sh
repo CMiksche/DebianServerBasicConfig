@@ -234,6 +234,12 @@ fi
 # Forward E-Mails to Systememail
 echo "root: $systemmail" >> /etc/aliases
 
+# Install GoAccess
+if [ $goaccess == "yes" ]
+	then 
+		sudo apt install goaccess -y
+fi
+
 # Restart Services
 /etc/init.d/ssh restart
 

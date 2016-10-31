@@ -27,6 +27,8 @@ php="yes"
 node="yes"
 # Python3 ?
 python3="yes"
+# GoAccess (Log File Analyser) ?
+goaccess="yes"
 # FTP-Server
 # Options: vsftpd, any other word (= no FTP-Service)
 ftpserver="vsftpd"
