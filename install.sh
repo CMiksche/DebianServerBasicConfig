@@ -1,18 +1,18 @@
 #!/bin/bash
 #
-#  ____       _     _               ____                           
-# |  _ \  ___| |__ (_) __ _ _ __   / ___|  ___ _ ____   _____ _ __ 
+#  ____       _     _               ____
+# |  _ \  ___| |__ (_) __ _ _ __   / ___|  ___ _ ____   _____ _ __
 # | | | |/ _ \ '_ \| |/ _` | '_ \  \___ \ / _ \ '__\ \ / / _ \ '__|
-# | |_| |  __/ |_) | | (_| | | | |  ___) |  __/ |   \ V /  __/ |   
-# |____/ \___|_.__/|_|\__,_|_| |_| |____/ \___|_|    \_/ \___|_|   
-#                                                                  
-#  ____            _         ____             __ _       
-# | __ )  __ _ ___(_) ___   / ___|___  _ __  / _(_) __ _ 
+# | |_| |  __/ |_) | | (_| | | | |  ___) |  __/ |   \ V /  __/ |
+# |____/ \___|_.__/|_|\__,_|_| |_| |____/ \___|_|    \_/ \___|_|
+#
+#  ____            _         ____             __ _
+# | __ )  __ _ ___(_) ___   / ___|___  _ __  / _(_) __ _
 # |  _ \ / _` / __| |/ __| | |   / _ \| '_ \| |_| |/ _` |
 # | |_) | (_| \__ \ | (__  | |__| (_) | | | |  _| | (_| |
 # |____/ \__,_|___/_|\___|  \____\___/|_| |_|_| |_|\__, |
-#                                                  |___/ 
-# 
+#                                                  |___/
+#
 # Script by Christoph Daniel Miksche
 # License: GNU General Public License
 #
@@ -43,11 +43,11 @@ apt dist-upgrade -y
 apt install openssh-server ca-certificates rkhunter fail2ban nano sudo htop whois curl nodejs figlet screen cron git ntp tar zip unzip -y
 
 if [ $mailserver == "yes" ]
-	then 
+	then
 		apt purge exim4*
 		apt install netcat -y
 		mkdir ~/build ; cd ~/build
-		wget -O - https://github.com/andryyy/mailcow/archive/v0.13.1.tar.gz | tar xfz -
+		wget -O - https://github.com/mailcow/mailcow/archive/v0.14.tar.gz | tar xfz -
 		cd mailcow-*
 		chmod +x /install.sh
 		echo "
@@ -60,7 +60,7 @@ if [ $mailserver == "yes" ]
 fi
 
 if [ $mailserver == "postfix" ]
-	then 
+	then
 		apt install postfix -y
 fi
 
@@ -79,7 +79,7 @@ ufw allow proto tcp from any to any port "$sshport"
 ufw allow http
 ufw allow https
 ufw allow ftp
-# Enable Firewall 
+# Enable Firewall
 ufw enable
 
 # Change E-Mail in rkhunter config
@@ -116,7 +116,7 @@ echo "$hostname" >> /etc/hostname
 
 # Install FTP Service
 if [ $ftpserver == "vsftpd" ]
-	then 
+	then
 		sudo apt install vsftpd -y
 		# Allow FTP Commands
 		sed -i "s/#write_enable=YES/write_enable=YES/g" /etc/vsftpd.conf
@@ -124,24 +124,24 @@ fi
 
 # Install Node.js
 if [ $node == "yes" ]
-	then 
+	then
 		sudo apt install nodejs-legacy node npm -y
 		npm install pm2 -g
 fi
 
 # Install Python
 if [ $python3 == "yes" ]
-	then 
+	then
 		sudo apt install python python-pip python3 python3-pip -y
 fi
 
 # Install Webserver
 # nginx
 if [ $webserver == "nginx" ]
-	then 
+	then
 		# Install PHP
 		if [ $php == "yes" ]
-			then 
+			then
 				sudo apt install php5-fpm -y
 		fi
 		sudo apt install nginx vsftpd -y
@@ -170,33 +170,21 @@ if [ $webserver == "nginx" ]
 fi
 # apache
 if [ $webserver == "apache2" ]
-	then 
+	then
 		sudo apt install apache2 php5 -y
 		# Install Composer
 		installcomposer
 fi
 
 # Install Database
+# MySQL
 if [ $database == "mysql" ]
-	then 
+	then
 		sudo apt install mysql-server phpmyadmin -y
-		# Create Backup
-		# Create dir
-		mkdir /opt/basic_backup
-		# Copy Backup File
-		cp copy/createbackup.sh /opt/basic_backup/createbackup.sh
-		# Change hostname in File
-		sed -i "s/DBHOSTNAME/$hostname/g" /opt/basic_backup/createbackup.sh
-		# Change database password in File
-		sed -i "s/DBPASS/$databasepw/g" /opt/basic_backup/createbackup.sh
-		# Change database user in File
-		sed -i "s/DBUSER/$databaseuser/g" /opt/basic_backup/createbackup.sh
-		# Make file executable
-		chmod +x /opt/basic_backup/createbackup.sh
-		# Write command in crontab
-		echo "35 2    * * *	root    /opt/basic_backup/createbackup.sh" >> /etc/crontab
+    # make backup settings
+    dbbackup
 		if [ $webserver == "nginx" ]
-			then 
+			then
 			# website.com/phpmyadmin
 			ln -s /usr/share/phpmyadmin /usr/share/nginx/html
 			ln -s /usr/share/phpmyadmin /var/www/html
@@ -211,7 +199,14 @@ if [ $database == "mysql" ]
 			service php5-fpm restart
 			service nginx restart
 		fi
-fi 
+fi
+# MariaDB
+if [ $database == "mariadb" ]
+	then
+		sudo apt install mariadb-server -y
+		# make backup settings
+		dbbackup
+fi
 
 # Install Let's Encrypt
 if [ $letsencrypt == "yes" ]
@@ -236,7 +231,7 @@ echo "root: $systemmail" >> /etc/aliases
 
 # Install GoAccess
 if [ $goaccess == "yes" ]
-	then 
+	then
 		sudo apt install goaccess -y
 fi
 
@@ -248,17 +243,17 @@ echo "
 
 Hello,
 the installation is finished."
-if [ $database == "mysql" ]
-	then 
+if [ $database == "mysql" ] || [ $database == "mariadb" ]
+	then
 		echo "
 		Every day at 2:35 a backup of your database will created, Saturdays a backup of the dir /var/www will be created too.
 		You can find your backups here: /var/www_backup/."
-fi 
+fi
 echo "
 You should restart (reboot) your Server now."
-#	 _____       __ 
+#	 _____       __
 #	| ____|___  / _|
-#	|  _| / _ \| |_ 
+#	|  _| / _ \| |_
 #	| |__| (_) |  _|
-#	|_____\___/|_|  
-#					
+#	|_____\___/|_|
+#

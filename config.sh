@@ -40,7 +40,7 @@ webserver="nginx"
 # Without www.
 website="yourdomain.com"
 # Database
-# Options: mysql, any other word (= no Database)
+# Options: mysql, mariadb, any other word (= no Database)
 database="mysql"
 # Password for Database User
 # Only needed if you use a database
