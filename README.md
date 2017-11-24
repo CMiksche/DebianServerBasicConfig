@@ -21,3 +21,7 @@ Variables can be put / set in the "config.sh" file.
 * Install of the FTP Service, Webserver and Database
 * Creates a simple message of the day with warnings for unauthorized user
 * Creates a vHost for your Website
+
+### Instructions:
+
+* German: https://blog.wronnay.net/tutorial-einen-debian-server-absichern/
