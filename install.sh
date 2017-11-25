@@ -79,6 +79,8 @@ ufw allow proto tcp from any to any port "$sshport"
 ufw allow http
 ufw allow https
 ufw allow ftp
+# Enable Logging
+ufw logging on 
 # Enable Firewall
 ufw enable
 
